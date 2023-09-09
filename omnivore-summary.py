@@ -80,11 +80,11 @@ def summarize(data):
     print("* Archive:", num_archived)
     print()
     print("* Page types:")
-    for key, value in page_type_counter.items():
+    for key, value in sorted(page_type_counter.items()):
         print(f"  - {key.capitalize()}: {value}")
     print()
     print("* Labels:")
-    for key, value in label_counter.items():
+    for key, value in sorted(label_counter.items()):
         print(f"  - {key}: {value}")
     print()
 
