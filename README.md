@@ -25,3 +25,9 @@ variable `api_url` or set the environment variable `OMNIVORE_API_URL`.
 
 You can change the path for the exported data with the global variable
 `backup_path` or the environment variable `OMNIVORE_BACKUP_PATH`.
+
+Finally, just run the script via Python:
+
+```sh
+python omnivore-export.py 
+```
