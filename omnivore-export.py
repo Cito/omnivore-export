@@ -21,10 +21,9 @@ add_date_to_path = True
 
 query_all = """
 {
-    search(first: null, after: null, query: "in:all") {
+    search(first: 9999, after: null, query: "in:all") {
         ... on SearchSuccess {
             edges {
-                cursor
                 node {
                     title
                     slug
@@ -88,6 +87,7 @@ def main():
     url = environ.get('OMNIVORE_API_URL', api_url)
     key = environ.get('OMNIVORE_API_KEY', api_key)
     data = get_all(url, key)
+    print("Number of links:", len(data["search"]["edges"]))
     path = environ.get('OMNIVORE_BACKUP_PATH', backup_path)
     if add_date_to_path:
         parts = list(path.partition('.'))
