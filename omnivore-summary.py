@@ -8,7 +8,7 @@ more info at https://github.com/Cito/omnivore-export
 from collections import Counter
 from os import environ
 
-from gql import gql, Client
+from gql import Client, gql
 from gql.transport.httpx import HTTPXTransport
 
 api_url = "https://api-prod.omnivore.app/api/graphql"
@@ -57,6 +57,20 @@ def get_all(url, key):
     return result
 
 
+def show_table(data, width=80):
+    max_key_len = max(len(key) for key in data)
+    max_val_len = max(len(str(val)) for val in data.values())
+    cols = width // (max_key_len + max_val_len + 5)
+    row = []
+    for key, val in sorted(data.items()):
+        row.append(f"{key:<{max_key_len}}: {val:>{max_val_len}}")
+        if len(row) >= cols:
+            print(' | '.join(row))
+            row = []
+    if row:
+        print(' | '.join(row))
+
+
 def summarize(data):
     num_archived = num_inbox = 0
     page_type_counter = Counter()
@@ -69,7 +83,7 @@ def summarize(data):
             num_inbox += 1
         page_type = node["pageType"]
         if page_type:
-            page_type_counter.update([page_type])
+            page_type_counter.update([page_type.capitalize()])
         labels = node["labels"]
         if labels:
             labels = [label["name"] for label in node["labels"]]
@@ -80,12 +94,10 @@ def summarize(data):
     print("* Archive:", num_archived)
     print()
     print("* Page types:")
-    for key, value in sorted(page_type_counter.items()):
-        print(f"  - {key.capitalize()}: {value}")
+    show_table(page_type_counter)
     print()
     print("* Labels:")
-    for key, value in sorted(label_counter.items()):
-        print(f"  - {key}: {value}")
+    show_table(label_counter)
     print()
 
 
