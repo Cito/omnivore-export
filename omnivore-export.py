@@ -21,7 +21,7 @@ add_date_to_path = True
 
 query_all = """
 {
-    search(first: 9999, after: null, query: "in:all") {
+    search(first: 9999, after: null, query: "in:all", includeContent: true) {
         ... on SearchSuccess {
             edges {
                 node {
