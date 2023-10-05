@@ -17,11 +17,20 @@ api_key = "FFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
 
 backup_path = "omnivore_backup.json"
 
+search = "in:all"
+limit = 9999
+with_content = False
+
 add_date_to_path = True
 
 query_all = """
-{
-    search(first: 9999, after: null, query: "in:all", includeContent: true) {
+query Export($search: String!,
+             $limit: Int!,
+             $withContent: Boolean!) {
+    search(query: $search, 
+           first: $limit,
+           after: null,
+           includeContent: $withContent) {
         ... on SearchSuccess {
             edges {
                 node {
@@ -70,12 +79,12 @@ query_all = """
 
 
 def get_all(url, key):
-    headers = dict(Authorization=key)
+    headers = {'Authorization': key}
     transport = HTTPXTransport(url=url, headers=headers)
     client = Client(transport=transport)
     query = gql(query_all)
-    result = client.execute(query)
-    return result
+    variables = {'search': search, 'limit': limit, 'withContent': with_content}
+    return client.execute(query, variables)
 
 
 def save_backup(data, path):
