@@ -5,7 +5,7 @@ This is an export script for the
 read-it-later solution written in Python.
 
 Its main purpose is to create a backup of all links saved in Omnivore,
-as long as the Omnivore app stil lacks an export function.
+as long as the Omnivore app still lacks an export function.
 
 To run this script, you need to install
 [gql](https://github.com/graphql-python/gql) with httpx support first:
@@ -28,6 +28,12 @@ or set the environment variable `OMNIVORE_API_URL`.
 You can change the path for the exported data
 with the global variable `backup_path`
 or the environment variable `OMNIVORE_BACKUP_PATH`.
+
+There are some more global variables that you can change in the script:
+
+- `search = "in:all"` - change if you don't want to export everything
+- `limit = 9999` - the maximum number of exported links
+- `with_content = False` - change if you want to export the content as well
 
 Finally, just run the script via Python:
 
