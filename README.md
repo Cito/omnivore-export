@@ -29,6 +29,12 @@ You can change the path for the exported data
 with the global variable `backup_path`
 or the environment variable `OMNIVORE_BACKUP_PATH`.
 
+There are some more global variables that you can change in the script:
+
+- `search = "in:all"` - change if you don't want to export everything
+- `limit = 9999` - the maximum number of exported links
+- `with_content = False` - change if you want to export the content as well
+
 Finally, just run the script via Python:
 
 ```sh
