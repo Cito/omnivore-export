@@ -1,6 +1,6 @@
 #!/usr/bin/python3.11
 
-"""Export Links from Omnivore.
+"""Summarize Links from Omnivore.
 
 more info at https://github.com/Cito/omnivore-export
 """
@@ -14,12 +14,18 @@ from gql.transport.httpx import HTTPXTransport
 api_url = "https://api-prod.omnivore.app/api/graphql"
 api_key = "FFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
 
+search = "in:all"
+limit = 100
+timeout = 15
 
 add_date_to_path = True
 
-query_all = """
-{
-    search(first: 9999, after: null, query: "in:all") {
+query_summarize = """
+query Summarize($search: String!,
+                $limit: Int!, $after: String) {
+    search(query: $search,
+           first: $limit, after: $after,
+           includeContent: false) {
         ... on SearchSuccess {
             edges {
                 node {
@@ -37,6 +43,7 @@ query_all = """
                     readAt
                     savedAt
                 }
+                cursor
             }
         }
         ... on SearchError {
@@ -44,17 +51,31 @@ query_all = """
         }
     }
 }
-
 """
 
 
 def get_all(url, key):
-    headers = dict(Authorization=key)
-    transport = HTTPXTransport(url=url, headers=headers)
+    print("Reading data...")
+
+    headers = {'Authorization': key}
+    transport = HTTPXTransport(url=url, headers=headers, timeout=timeout)
     client = Client(transport=transport)
-    query = gql(query_all)
-    result = client.execute(query)
-    return result
+    query = gql(query_summarize)
+    variables = {'search': 'in:all', 'limit': limit, 'after': None}
+    all_nodes = []
+
+    while True:
+        print(".", end="", flush=True)
+        result = client.execute(query, variables)
+        edges = result['search']['edges']
+        if not edges:
+            break
+        variables['after'] = edges[-1]['cursor']
+        nodes = [edge['node'] for edge in edges]
+        all_nodes += nodes
+    print()
+
+    return all_nodes
 
 
 def show_table(data, width=80):
@@ -71,12 +92,13 @@ def show_table(data, width=80):
         print(' | '.join(row))
 
 
-def summarize(data):
+def summarize(nodes):
+    print("Summarizing...")
+
     num_archived = num_inbox = 0
     page_type_counter = Counter()
     label_counter = Counter()
-    for edge in data["search"]["edges"]:
-        node = edge["node"]
+    for node in nodes:
         if node['isArchived']:
             num_archived += 1
         else:
@@ -104,10 +126,9 @@ def summarize(data):
 def main():
     url = environ.get('OMNIVORE_API_URL', api_url)
     key = environ.get('OMNIVORE_API_KEY', api_key)
-    print("Reading data...")
-    data = get_all(url, key)
-    print("Summarizing...")
-    summarize(data)
+
+    nodes = get_all(url, key)
+    summarize(nodes)
 
 
 if __name__ == '__main__':
