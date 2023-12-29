@@ -32,7 +32,7 @@ or the environment variable `OMNIVORE_BACKUP_PATH`.
 There are some more global variables that you can change in the script:
 
 - `search = "in:all"` - change if you don't want to export everything
-- `limit = 100` - the batch size when querying the API
+- `limit = 100` - the batch size when querying the API (max. 100)
 - `timeout = 15` - the request timeout in seconds when querying the API
 - `with_content = False` - change if you want to export the content as well
 
