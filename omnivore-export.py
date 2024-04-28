@@ -1,4 +1,4 @@
-#!/usr/bin/python3.11
+#!/usr/bin/python3.12
 
 """Export Links from Omnivore.
 
@@ -28,7 +28,7 @@ query_export = """
 query Export($search: String!,
              $limit: Int!, $after: String,
              $withContent: Boolean!) {
-    search(query: $search, 
+    search(query: $search,
            first: $limit, after: $after,
            includeContent: $withContent) {
         ... on SearchSuccess {
