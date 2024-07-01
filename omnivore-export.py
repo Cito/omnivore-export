@@ -17,10 +17,10 @@ api_key = "FFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
 
 backup_path = "omnivore_backup.json"
 
-search = "in:all"
+search = environ.get("OMNIVORE_QUERY", "in:all") 
 limit = 100
 timeout = 15
-with_content = False
+with_content = environ.get("OMNIVORE_WITH_CONTENT", "0") == "1"
 
 add_date_to_path = True
 
@@ -104,6 +104,7 @@ def get_all(url, key):
 def save_backup(data, path):
     print("Saving data...")
     with open(path, 'w', encoding='utf-8') as backup:
+        print(f"Dumping at {path}")
         dump(data, backup)
 
 
