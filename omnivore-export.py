@@ -5,6 +5,8 @@
 more info at https://github.com/Cito/omnivore-export
 """
 
+import argparse
+import sys
 from datetime import date
 from json import dump
 from os import environ
@@ -14,16 +16,15 @@ from gql import Client, gql
 from gql.transport.httpx import HTTPXTransport
 
 API_URL = "https://api-prod.omnivore.app/api/graphql"
-API_KEY = "FFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
+API_KEY = "XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
 BACKUP_PATH = "omnivore_backup.json"
+WITH_DATE = True
 
 SEARCH = "in:all"
 LIMIT = 100
 TIMEOUT = 15
 WITH_CONTENT = False
-
-ADD_DATE_TO_PATH = True
 
 QUERY_EXPORT = """
 query Export($search: String!,
@@ -119,14 +120,61 @@ def save_backup(data: Any, path: str):
 
 
 def main():
-    url = environ.get("OMNIVORE_API_URL", API_URL)
-    key = environ.get("OMNIVORE_API_KEY", API_KEY)
-    search = environ.get("OMNIVORE_QUERY", SEARCH)
-    with_content = bool(environ.get("OMNIVORE_WITH_CONTENT", WITH_CONTENT))
+    parser = argparse.ArgumentParser(description="Export links from Omnivore API")
+    parser.add_argument(
+        "--url",
+        default=environ.get("OMNIVORE_API_URL", API_URL),
+        help="the Omnivore API URL",
+    )
+    parser.add_argument(
+        "--key",
+        default=environ.get("OMNIVORE_API_KEY", API_KEY),
+        help="the Omnivore API Key",
+    )
+    parser.add_argument(
+        "--search",
+        default=environ.get("OMNIVORE_QUERY", SEARCH),
+        help="the Omnivore search query",
+    )
+    with_content = environ.get("OMNIVORE_WITH_CONTENT", WITH_CONTENT)
+    if isinstance(with_content, str):
+        with_content = not with_content.lower() in ("", "0", "no", "false")
+    parser.add_argument(
+        "--with-content",
+        action="store_true",
+        default=with_content,
+        help="include page content in the backup",
+    )
+    parser.add_argument(
+        "--path",
+        default=environ.get("OMNIVORE_BACKUP_PATH", BACKUP_PATH),
+        help="the backup file path",
+    )
+    with_date = environ.get("OMNIVORE_WITH_DATE", WITH_DATE)
+    if isinstance(with_date, str):
+        with_date = not with_date.lower() in ("", "0", "no", "false")
+    parser.add_argument(
+        "--without-date",
+        action="store_true",
+        default=not with_date,
+        help="do not add the current date to the backup path",
+    )
+
+    args = parser.parse_args()
+    url = args.url
+    key = args.key
+    search = args.search
+    with_content = args.with_content
+    path = args.path
+    with_date = not args.without_date
+
+    if not key or "X" in key:
+        print("Please specify your Omnivore API key.")
+        sys.exit(1)
+
     nodes = get_all(url, key, search, with_content)
     print("Number of links:", len(nodes))
-    path = environ.get("OMNIVORE_BACKUP_PATH", BACKUP_PATH)
-    if ADD_DATE_TO_PATH:
+    if with_date:
         parts = list(path.partition("."))
         parts.insert(-2, "-" + date.today().isoformat())
         path = "".join(parts)

@@ -5,6 +5,8 @@
 more info at https://github.com/Cito/omnivore-export
 """
 
+import argparse
+import sys
 from collections import Counter
 from os import environ
 from typing import Any
@@ -13,7 +15,7 @@ from gql import Client, gql
 from gql.transport.httpx import HTTPXTransport
 
 API_URL = "https://api-prod.omnivore.app/api/graphql"
-API_KEY = "FFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
+API_KEY = "XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
 SEARCH = "in:all"
 LIMIT = 100
@@ -62,7 +64,7 @@ def get_all(url: str, key: str, search: str) -> list[dict[str, Any]]:
     transport = HTTPXTransport(url=url, headers=headers, timeout=TIMEOUT)
     client = Client(transport=transport)
     query = gql(QUERY_SUMMARIZE)
-    variables = {"search": "in:all", "limit": TIMEOUT, "after": None}
+    variables = {"search": search, "limit": TIMEOUT, "after": None}
 
     all_nodes: list[Any] = []
     while True:
@@ -126,9 +128,32 @@ def summarize(nodes: list[dict[str, Any]]) -> None:
 
 
 def main():
-    url = environ.get("OMNIVORE_API_URL", API_URL)
-    key = environ.get("OMNIVORE_API_KEY", API_KEY)
-    search = environ.get("OMNIVORE_QUERY", SEARCH)
+    parser = argparse.ArgumentParser(description="Export links from Omnivore API")
+    parser.add_argument(
+        "--url",
+        default=environ.get("OMNIVORE_API_URL", API_URL),
+        help="the Omnivore API URL",
+    )
+    parser.add_argument(
+        "--key",
+        default=environ.get("OMNIVORE_API_KEY", API_KEY),
+        help="the Omnivore API Key",
+    )
+    parser.add_argument(
+        "--search",
+        default=environ.get("OMNIVORE_QUERY", SEARCH),
+        help="the Omnivore search query",
+    )
+
+    args = parser.parse_args()
+
+    url = args.url
+    key = args.key
+    search = args.search
+
+    if not key or "X" in key:
+        print("Please specify your Omnivore API key.")
+        sys.exit(1)
 
     nodes = get_all(url, key, search)
     summarize(nodes)
