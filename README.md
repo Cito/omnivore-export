@@ -51,7 +51,7 @@ Finally, just run the script via Python:
 python omnivore-export.py 
 ```
 
-## Data Store summary
+## Data store summary
 
 This repository also contains a script `omnivore-summary.py`
 that can be used to print a summary of the data store in Omnivore.

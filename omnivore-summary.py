@@ -19,7 +19,7 @@ API_KEY = "XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
 SEARCH = "in:all"
 LIMIT = 100
-TIMEOUT = 15
+TIMEOUT = 30
 
 ADD_DATE_TO_PATH = True
 
@@ -64,7 +64,7 @@ def get_all(url: str, key: str, search: str) -> list[dict[str, Any]]:
     transport = HTTPXTransport(url=url, headers=headers, timeout=TIMEOUT)
     client = Client(transport=transport)
     query = gql(QUERY_SUMMARIZE)
-    variables = {"search": search, "limit": TIMEOUT, "after": None}
+    variables = {"search": search, "limit": LIMIT, "after": None}
 
     all_nodes: list[Any] = []
     while True:

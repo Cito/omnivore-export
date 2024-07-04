@@ -23,7 +23,7 @@ WITH_DATE = True
 
 SEARCH = "in:all"
 LIMIT = 100
-TIMEOUT = 15
+TIMEOUT = 30
 WITH_CONTENT = False
 
 QUERY_EXPORT = """
