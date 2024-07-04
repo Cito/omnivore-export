@@ -21,8 +21,6 @@ SEARCH = "in:all"
 LIMIT = 100
 TIMEOUT = 30
 
-ADD_DATE_TO_PATH = True
-
 QUERY_SUMMARIZE = """
 query Summarize($search: String!,
                 $limit: Int!, $after: String) {
