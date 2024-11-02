@@ -22,10 +22,13 @@ the service in November 2024 and recommends using
 
 While Readwise has released
 an [Omnivore importer](https://x.com/ReadwiseReader/status/1851426417684193527),
-Wallabag was lacking such a feature.
+Wallabag was initially lacking such a feature.
 
 Therefore, this repository also contains a script to convert the exported
 links from Omnivore to the import format of Wallabag v2.
+
+Meanwhile, Wallabag v2.6 also provides a function to import from Omnivore,
+so this script is not needed any more either.
 
 ## Export and summary scripts
 
