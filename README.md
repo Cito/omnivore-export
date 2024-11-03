@@ -27,8 +27,11 @@ Wallabag was initially lacking such a feature.
 Therefore, this repository also contains a script to convert the exported
 links from Omnivore to the import format of Wallabag v2.
 
-Meanwhile, Wallabag v2.6 also provides a function to import from Omnivore,
-so this script is not needed any more either.
+Meanwhile, Wallabag also
+[integrated](https://github.com/wallabag/wallabag/pull/7754) a function
+to import from Omnivore, which will be available in version 2.6.10 of Wallabag
+and can be already used in the hosted solution,
+so that this script is not needed any more either.
 
 ## Export and summary scripts
 
@@ -127,3 +130,6 @@ into Wallabag. You can find the import function in the web UI under
 
 If you imported the wrong files and want to start from scratch, you can use
 the function "Config" - "Reset area" - "Remove all entries" in Wallabag.
+
+Note that the script currently does not convert highlights, just the links
+and the content.
